@@ -1,64 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: evalorie <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/01 11:34:05 by evalorie          #+#    #+#             */
+/*   Updated: 2021/12/01 11:38:09 by evalorie         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
-int	ft_putnbr_xX(int nb, char *alf)
-{
-	int	index[100];
-	int	i;
-	int tmp;
-
-	/*if (!alf || ft_strlen(alf) < base)
-		return (-1);*/
-	index[0] = 0;
-	i = 1; 
-	while (nb)
-	{
-		index[i] = nb % 16;
-		nb = nb / 16;
-		i++;
-	}
-	tmp = i;
-	while (i)
-		write (1, &alf[index[--i]], 1);
-	return (tmp);
-}
-
-void	ft_itoa(t_struct *a, long long int nb)
-{
-	char	c;
-	long long int	mod;
-
-	mod = nb % 10;
-	nb = nb / 10;
-	if (nb != 0)
-		ft_itoa(a, nb);
-	c = mod + '0';
-	a->count += write (1, &c, 1);
-}
-
-void	ft_putnbr(int n, t_struct *a)
-{
-	long long int	nb;
-
-	nb = (long long int)n;
-	if (nb < 0)
-	{
-		a->count += write (1, "-", 1);
-		nb *= -1;
-	}
-	ft_itoa(a, nb);
-}
-
-int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] != '\0')
-		i++;
-	return (i);
-}
-
-void	ft_check_s(t_struct *a, char *s)
+static void	ft_check_s(t_struct *a, char *s)
 {
 	if (s == NULL)
 		a->count += write (1, "(null)", 6);
@@ -66,13 +20,7 @@ void	ft_check_s(t_struct *a, char *s)
 		a->count += write (1, s, ft_strlen(s));
 }
 
-int	ft_putchar(char *c)
-{
-	write (1, &c, 1);
-	return (1);
-}
-
-void	ft_check_type(t_struct *a, char *str)
+static void	ft_check_type(t_struct *a, char *str)
 {
 	if (str[++a->i] == '%')
 		a->count += write(1, "%", 1);
@@ -87,12 +35,12 @@ void	ft_check_type(t_struct *a, char *str)
 	else if (str[a->i] == 'p')
 	{
 		a->count += write(1, "0x", 2);
-		a->count += ft_putnbr_xX(va_arg(a->pa, long int), HEX_L);
+		a->count += ft_putnbr_xx(va_arg(a->pa, long int), HEX_L);
 	}
 	else if (str[a->i] == 'x')
-		a->count += ft_putnbr_xX((unsigned int)va_arg(a->pa, int), HEX_L);
+		a->count += ft_putnbr_xx((unsigned int)va_arg(a->pa, int), HEX_L);
 	else if (str[a->i] == 'X')
-		a->count += ft_putnbr_xX((unsigned int)va_arg(a->pa, int), HEX_U);
+		a->count += ft_putnbr_xx((unsigned int)va_arg(a->pa, int), HEX_U);
 }
 
 int	ft_printf(const char *str, ...)
@@ -113,7 +61,7 @@ int	ft_printf(const char *str, ...)
 	return (a.count);
 }
 
-int main (void)
+/*int main (void)
 {
 	int	n = 516;
 	int i;
@@ -122,4 +70,4 @@ int main (void)
 	i = ft_printf("%d\n %s", n, "sdf");
 	printf("%d", i);
 	return (0);
-}
+}*/
